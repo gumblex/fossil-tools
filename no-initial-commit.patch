@@ -1,0 +1,36 @@
+Index: src/db.c
+==================================================================
+--- src/db.c
++++ src/db.c
+@@ -1997,11 +1997,11 @@
+   db_begin_transaction();
+   if( bUseSha1 ){
+     g.eHashPolicy = HPOLICY_SHA1;
+     db_set_int("hash-policy", HPOLICY_SHA1, 0);
+   }
+-  if( zDate==0 ) zDate = "now";
++  // if( zDate==0 ) zDate = "now";
+   db_initial_setup(zTemplate, zDate, zDefaultUser);
+   db_end_transaction(0);
+   if( zTemplate ) db_detach("settingSrc");
+   fossil_print("project-id: %s\n", db_get("project-code", 0));
+   fossil_print("server-id:  %s\n", db_get("server-code", 0));
+
+Index: src/main.c
+==================================================================
+--- src/main.c
++++ src/main.c
+@@ -2027,11 +2027,11 @@
+         db_create_repository(zRepo);
+         db_open_repository(zRepo);
+         db_begin_transaction();
+         g.eHashPolicy = HPOLICY_AUTO;
+         db_set_int("hash-policy", HPOLICY_AUTO, 0);
+-        db_initial_setup(0, "now", g.zLogin);
++        db_initial_setup(0, 0, g.zLogin);
+         db_end_transaction(0);
+         fossil_print("project-id: %s\n", db_get("project-code", 0));
+         fossil_print("server-id:  %s\n", db_get("server-code", 0));
+         zPassword = db_text(0, "SELECT pw FROM user WHERE login=%Q", g.zLogin);
+         fossil_print("admin-user: %s (initial password is \"%s\")\n",
+
