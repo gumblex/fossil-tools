@@ -11,6 +11,7 @@ if [ ! -f "$FOSSILREPO" ]; then
     fossil rebuild --wal "$FOSSILREPO"
     fossil sqlite3 -R "$FOSSILREPO" "INSERT OR REPLACE INTO config VALUES ('project-name', '$DIRNAME', now());"
     fossil open "$FOSSILREPO"
+    fossil addremove
     fossil commit -m "initial commit"
 fi
 
