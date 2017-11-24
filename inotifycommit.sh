@@ -22,5 +22,5 @@ while true; do
     now="$(date "$DATEFORMAT" | tee /dev/tty)"
     echo "$now"
     msg="$now $(fossil addremove | tee /dev/tty | head -n 1)"
-    fossil commit -m "$msg"
+    fossil commit --no-warnings -m "$msg"
 done
