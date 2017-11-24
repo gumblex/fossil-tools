@@ -7,10 +7,11 @@ FOSSILREPO=".fossil"
 DATEFORMAT="+%Y-%m-%d %H:%M:%S"
 
 if [ ! -f "$FOSSILREPO" ]; then
-  fossil new "$FOSSILREPO"
-  fossil rebuild --wal "$FOSSILREPO"
-  fossil sqlite3 -R "$FOSSILREPO" "INSERT OR REPLACE INTO config VALUES ('project-name', '$DIRNAME', now());"
-  fossil open "$FOSSILREPO"
+    fossil new "$FOSSILREPO"
+    fossil rebuild --wal "$FOSSILREPO"
+    fossil sqlite3 -R "$FOSSILREPO" "INSERT OR REPLACE INTO config VALUES ('project-name', '$DIRNAME', now());"
+    fossil open "$FOSSILREPO"
+    fossil commit -m "initial commit"
 fi
 
 while true; do
