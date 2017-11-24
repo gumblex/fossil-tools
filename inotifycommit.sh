@@ -20,7 +20,7 @@ counter=0
 changed=0
 
 while true; do
-    inotifywait --exclude _FOSSIL_ --exclude .fslckout --exclude "$FOSSILREPO*" -r -e close_write -e delete -e move -t 1 -q .
+    inotifywait --exclude "(_FOSSIL_|.fslckout|$FOSSILREPO.*)" -r -e close_write -e delete -e move -t 1 -q .
     exit_status=$?
     if [ $exit_status -eq 0 ]; then
         changed=1
@@ -35,7 +35,6 @@ while true; do
         counter=0
         changed=0
         now="$(date "$DATEFORMAT" | tee /dev/tty)"
-        echo "$now"
         msg="$now $(fossil addremove | tee /dev/tty | head -n 1)"
         fossil commit --no-warnings -m "$msg"
     fi
