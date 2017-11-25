@@ -36,6 +36,6 @@ while true; do
         changed=0
         now="$(date "$DATEFORMAT" | tee /dev/tty)"
         msg="$now $(fossil addremove | tee /dev/tty | head -n 1)"
-        fossil commit --no-warnings -m "$msg"
+        fossil commit --no-warnings --allow-fork -m "$msg"
     fi
 done
