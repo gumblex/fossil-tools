@@ -19,7 +19,8 @@
 # This sample shows how to prevent push of commits where the log message starts
 # with "WIP" (work in progress).
 
-FOSSILREPO="repo.fossil"
+DIRNAME="${PWD##*/}"
+FOSSILREPO="${DIRNAME}.fossil"
 mkdir -p .marks
 if [ ! -f "$FOSSILREPO" ]; then
   rm .marks/*
@@ -28,6 +29,7 @@ if [ ! -f "$FOSSILREPO" ]; then
   echo ".marks/" >> .gitignore
   echo "$FOSSILREPO" >> .gitignore
   fossil new --sha1 "$FOSSILREPO"
+  fossil sqlite3 -R "$FOSSILREPO" "INSERT OR REPLACE INTO config VALUES ('project-name', '${DIRNAME}', now());"
 fi
 git fast-export --all --import-marks=.marks/git --export-marks=.marks/git | fossil import --import-marks .marks/fossil --export-marks .marks/fossil --git --incremental "$FOSSILREPO"
 
