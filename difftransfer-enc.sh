@@ -1,7 +1,11 @@
 #!/bin/bash
 tmpf=$(mktemp)
-fossil test-delta-create "$1" "$2" - | gzip -9 > "$tmpf"
-(sha1sum < "$tmpf" | awk '{print $1}'; base64 "$tmpf") | awk 'BEGIN {FS="";RS="\n"} {
+orig=$(mktemp)
+cat "$1" > "$orig"
+fossil test-delta-create "$orig" "$2" "$tmpf"
+zopfli --gzip "$tmpf"
+mv "$tmpf".gz "$tmpf"
+(sha1sum "$2" | awk '{print $1}'; base64 "$tmpf") | awk 'BEGIN {FS="";RS="\n"} {
 ln=""; last=""; lstcnt="."; lcount=0;
 for(i = 1; i <= NF; i++) {
   if ($i == last && lcount < 9) {
@@ -19,4 +23,4 @@ if (last == "\\") {ln=ln "\\0"} else {ln=ln last};
 if (lcount > 0) ln=ln"\\"lcount;
 print ln;
 }'
-rm "$tmpf"
+rm "$tmpf" "$orig"
