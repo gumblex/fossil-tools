@@ -5,7 +5,7 @@ if (!esc && $i != "\\") {last=$i; ln=ln $i;} else if (esc && $i == "0")
 {last="\\"; ln=ln "\\";} else if (!esc) {esc = 1; continue;} else {j = int($i);
 while (j-->0) {ln=ln last;}} esc = 0;} print ln;}' > "$tmpf1"
 shasum=$(head -n1 "$tmpf1")
-if [ -z "$VAR" ]; then
+if [ -z "$shasum" ]; then
   echo 'empty input'
   rm "$tmpf1" "$tmpf"
   exit 1
