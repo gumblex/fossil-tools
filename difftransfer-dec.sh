@@ -1,9 +1,10 @@
 #!/bin/bash
 tmpf1=$(mktemp); tmpf=$(mktemp)
-awk 'BEGIN {FS=""} {ln=""; last=""; esc=0; for(i = 1; i <= NF; i++) {
-if (!esc && $i != "\\") {last=$i; ln=ln $i;} else if (esc && $i == "0")
-{last="\\"; ln=ln "\\";} else if (!esc) {esc = 1; continue;} else {j = int($i);
-while (j-->0) {ln=ln last;}} esc = 0;} print ln;}' > "$tmpf1"
+awk 'BEGIN {FS=""} {ln=""; last=""; last2=""; esc=0; for(i = 1; i <= NF; i++)
+{if ($i == last2) {continue} last2=$i; if (!esc && $i != "\\") {last=$i;
+ln=ln $i;} else if (esc && $i == "0") {last="\\"; ln=ln "\\";} else if (!esc)
+{esc = 1; continue;} else {j = int($i); while (j-->0) {ln=ln last;}}
+esc = 0;} print ln;}' > "$tmpf1"
 shasum=$(head -n1 "$tmpf1")
 if [ -z "$shasum" ]; then
   echo 'empty input'
