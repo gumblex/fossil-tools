@@ -1,0 +1,67 @@
+Index: src/import.c
+==================================================================
+--- src/import.c
++++ src/import.c
+@@ -517,10 +517,11 @@
+ }
+ 
+ 
+ static struct{
+   const char *zMasterName;    /* Name of master branch */
++  int authorFlag;             /* Use author as checkin committer */
+ } ggit;
+ 
+ /*
+ ** Read the git-fast-import format from pIn and insert the corresponding
+ ** content into the database.
+@@ -619,19 +620,23 @@
+           gg.aData = 0;
+           gg.nData = 0;
+         }
+       }
+     }else
+-    if( strncmp(zLine, "author ", 7)==0 ){
++    if( (!ggit.authorFlag && strncmp(zLine, "author ", 7)==0)
++        || (ggit.authorFlag && strncmp(zLine, "committer ",10)==0
++            && gg.zUser!=NULL) ){
+       /* No-op */
+     }else
+     if( strncmp(zLine, "mark ", 5)==0 ){
+       trim_newline(&zLine[5]);
+       fossil_free(gg.zMark);
+       gg.zMark = fossil_strdup(&zLine[5]);
+     }else
+-    if( strncmp(zLine, "tagger ", 7)==0 || strncmp(zLine, "committer ",10)==0 ){
++    if( strncmp(zLine, "tagger ", 7)==0
++        || (ggit.authorFlag && strncmp(zLine, "author ", 7)==0)
++        || strncmp(zLine, "committer ",10)==0 ){
+       sqlite3_int64 secSince1970;
+       z = strchr(zLine, ' ');
+       while( fossil_isspace(*z) ) z++;
+       if( (zTo=strchr(z, '>'))==NULL ) goto malformed_line;
+       *(++zTo) = '\0';
+@@ -1603,10 +1608,11 @@
+ **   --git        Import from the git-fast-export file format (default)
+ **                Options:
+ **                  --import-marks  FILE Restore marks table from FILE
+ **                  --export-marks  FILE Save marks table to FILE
+ **                  --rename-master NAME Renames the master branch to NAME
++**                  --use-author    Uses author as the committer
+ **
+ **   --svn        Import from the svnadmin-dump file format.  The default
+ **                behaviour (unless overridden by --flat) is to treat 3
+ **                folders in the SVN root as special, following the
+ **                common layout of SVN repositories.  These are (by
+@@ -1727,10 +1733,11 @@
+     markfile_in = find_option("import-marks", 0, 1);
+     markfile_out = find_option("export-marks", 0, 1);
+     if( !(ggit.zMasterName = find_option("rename-master", 0, 1)) ){
+       ggit.zMasterName = "master";
+     }
++    ggit.authorFlag = find_option("use-author", 0, 0)!=0;
+   }
+   verify_all_options();
+ 
+   if( g.argc!=3 && g.argc!=4 ){
+     usage("--git|--svn ?OPTIONS? NEW-REPOSITORY ?INPUT-FILE?");
+

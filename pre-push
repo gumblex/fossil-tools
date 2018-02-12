@@ -28,9 +28,9 @@ if [ ! -f "$FOSSILREPO" ]; then
   touch .marks/fossil
   echo ".marks/" >> .gitignore
   echo "$FOSSILREPO" >> .gitignore
-  fossil new --sha1 "$FOSSILREPO"
+  git fast-export --all --export-marks=.marks/git | fossil import --export-marks .marks/fossil --git "$FOSSILREPO"
   fossil sqlite3 -R "$FOSSILREPO" "INSERT OR REPLACE INTO config VALUES ('project-name', '${DIRNAME}', now());"
+else
+  git fast-export --all --import-marks=.marks/git --export-marks=.marks/git | fossil import --import-marks .marks/fossil --export-marks .marks/fossil --git --incremental "$FOSSILREPO"
 fi
-git fast-export --all --import-marks=.marks/git --export-marks=.marks/git | fossil import --import-marks .marks/fossil --export-marks .marks/fossil --git --incremental "$FOSSILREPO"
-
 exit 0
