@@ -1,0 +1,18 @@
+Index: src/search.c
+==================================================================
+--- src/search.c
++++ src/search.c
+@@ -1775,11 +1775,11 @@
+      { 3,  "disable"  },
+      { 4,  "enable"   },
+      { 5,  "stemmer"  },
+   };
+   static const struct { char *zSetting; char *zName; char *zSw; } aSetng[] = {
+-     { "search-ckin",     "check-in search:",  "c" },
++     { "search-ci",       "check-in search:",  "c" },
+      { "search-doc",      "document search:",  "d" },
+      { "search-tkt",      "ticket search:",    "t" },
+      { "search-wiki",     "wiki search:",      "w" },
+      { "search-technote", "tech note search:", "e" },
+   };
+
